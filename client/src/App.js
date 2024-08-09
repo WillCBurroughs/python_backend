@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useEffect} from 'react'
 
 function App() {
+
+  const [data, setData] = useState([{}])
+
+useEffect(() => {
+  fetch("http://127.0.0.1:8000/members")
+    .then(res => {
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json(); // Parse the response as JSON
+    })
+    .then(data => {
+      setData(data);
+      console.log(data);
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+    });
+}, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {(typeof data === "undefined") ?(
+        <p>Loading...</p>
+      ) : (
+        data.members.map((member, i) => (
+          <p key={i}>{member}</p>
+        ))
+      ) }
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
+
